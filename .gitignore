@@ -73,6 +73,7 @@ weights/
 .pytest_cache/
 *.pth
 weights/
+video_data/
 # Translations
 *.mo
 *.pot
