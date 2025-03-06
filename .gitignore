@@ -74,6 +74,7 @@ weights/
 *.pth
 weights/
 video_data/
+data/
 # Translations
 *.mo
 *.pot

@@ -13,6 +13,7 @@ import numpy as np
 import cv2
 import os
 import shutil
+import sys
 
 # Create a pipeline
 pipeline = rs.pipeline()
@@ -54,14 +55,16 @@ align_to = rs.stream.color
 align = rs.align(align_to)
 count = 0
 
-try:
-    os.mkdir('output')
-except OSError as error:
-    shutil.rmtree('output') 
-    os.mkdir('output')
+dir_path = f'data/{sys.argv[1]}'
 
-os.mkdir('output/rgb')
-os.mkdir('output/depth')
+try:
+    os.mkdir(dir_path)
+except OSError as error:
+    shutil.rmtree(dir_path) 
+    os.mkdir(dir_path)
+
+os.mkdir(f'{dir_path}/rgb')
+os.mkdir(f'{dir_path}/depth')
 
 # Streaming loop
 try:
@@ -102,8 +105,8 @@ try:
         #cv2.imshow('Align Example', depth_image)
         key = cv2.waitKey(1)
         #print(color_image.dtype)
-        cv2.imwrite('output/rgb/frame' + f"{count:06}" + ".png", color_image)
-        cv2.imwrite('output/depth/frame' + f"{count:06}" + ".png", depth_image)
+        cv2.imwrite(f'{dir_path}/rgb/frame' + f"{count:06}" + ".png", color_image)
+        cv2.imwrite(f'{dir_path}/depth/frame' + f"{count:06}" + ".png", depth_image)
         count += 1
         
         
