@@ -1,5 +1,6 @@
 from estimater import *
 from reader import *
+import time
 import argparse
 
 
@@ -39,8 +40,12 @@ if __name__=='__main__':
 
     while not reader.get_video_detected():
         reader.get_first_frame()
+    
+    
+    time_array = []
 
     while True:
+        start_time = time.time()
         logging.info(f'i:{reader.get_count()}')
         color = reader.get_color()
         depth = reader.get_depth()
@@ -58,9 +63,16 @@ if __name__=='__main__':
         vis = draw_xyz_axis(color, ob_in_cam=center_pose, scale=0.1, K=reader.K, thickness=3, transparency=0, is_input_rgb=True)
         os.makedirs(f'{debug_dir}/track_vis', exist_ok=True)
         imageio.imwrite(f'{debug_dir}/track_vis/{reader.get_current_file()}.png', vis)
+        elapsed_time = time.time() - start_time
+        time_array.append(elapsed_time)
 
         reader.increment_count()
         
         if not reader.get_next_frame_exists():
             break
+    
+    f = open(f'{debug_dir}/timing.txt', "w")
+    for i in time_array:
+        f.write(f"{i}\n")
+    f.close()
     
