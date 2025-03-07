@@ -1,8 +1,12 @@
-# Real-Time Pose Estimation with FoundationPose: Exploring the Possibility of 
+# Real-Time Pose Estimation with FoundationPose: Exploring the Possibility of Using a 6D Pose Estimation Model for Digital Twin Technologies
 
 This is a fork of the implementation found [[here]](https://github.com/NVlabs/FoundationPose) and described below:
 
 We present FoundationPose, a unified foundation model for 6D object pose estimation and tracking, supporting both model-based and model-free setups. Our approach can be instantly applied at test-time to a novel object without fine-tuning, as long as its CAD model is given, or a small number of reference images are captured. We bridge the gap between these two setups with a neural implicit representation that allows for effective novel view synthesis, keeping the downstream pose estimation modules invariant under the same unified framework. Strong generalizability is achieved via large-scale synthetic training, aided by a large language model (LLM), a novel transformer-based architecture, and contrastive learning formulation. Extensive evaluation on multiple public datasets involving challenging scenarios and objects indicate our unified approach outperforms existing methods specialized for each task by a large margin. In addition, it even achieves comparable results to instance-level methods despite the reduced assumptions.
+
+# Changes
+
+
 
 # Data prepare
 
@@ -74,33 +78,6 @@ The paths have been set in argparse by default. If you need to change the scene,
 ```
 python run_demo.py
 ```
-
-
-# Training data download
-Our training data include scenes using 3D assets from GSO and Objaverse, rendered with high quality photo-realism and large domain randomization. Each data point includes **RGB, depth, object pose, camera pose, instance segmentation, 2D bounding box**. [[Google Drive]](https://drive.google.com/drive/folders/1s4pB6p4ApfWMiMjmTXOFco8dHbNXikp-?usp=sharing).
-
-- To parse the camera params including extrinsics and intrinsics
-  ```
-  with open(f'{base_dir}/camera_params/camera_params_000000.json','r') as ff:
-    camera_params = json.load(ff)
-  world_in_glcam = np.array(camera_params['cameraViewTransform']).reshape(4,4).T
-  cam_in_world = np.linalg.inv(world_in_glcam)@glcam_in_cvcam
-  world_in_cam = np.linalg.inv(cam_in_world)
-  focal_length = camera_params["cameraFocalLength"]
-  horiz_aperture = camera_params["cameraAperture"][0]
-  vert_aperture = H / W * horiz_aperture
-  focal_y = H * focal_length / vert_aperture
-  focal_x = W * focal_length / horiz_aperture
-  center_y = H * 0.5
-  center_x = W * 0.5
-
-  fx, fy, cx, cy = focal_x, focal_y, center_x, center_y
-  K = np.eye(3)
-  K[0,0] = fx
-  K[1,1] = fy
-  K[0,2] = cx
-  K[1,2] = cy
-  ```
 
 
 # License
