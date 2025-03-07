@@ -14,6 +14,7 @@ if __name__=='__main__':
     parser.add_argument('--track_refine_iter', type=int, default=2)
     parser.add_argument('--debug', type=int, default=2)
     parser.add_argument('--debug_dir', type=str, default=f'{code_dir}/debug')
+    parser.add_argument('--simulate', type=bool, default=False)
     args = parser.parse_args()
 
     set_logging_format()
@@ -22,9 +23,9 @@ if __name__=='__main__':
     scene_dir = f'{code_dir}/data/{args.test_scene_dir}'
     mesh_path = f'{code_dir}/data/{args.test_scene_dir}/mesh/{args.mesh_file}'
 
-    rename_files(f'{scene_dir}/rgb')
-    rename_files(f'{scene_dir}/depth')
-    rename_files(f'{scene_dir}/masks')
+    rename_files(f'{scene_dir}/rgb', args.simulate)
+    rename_files(f'{scene_dir}/depth', args.simulate)
+    rename_files(f'{scene_dir}/masks', args.simulate)
 
     mesh = trimesh.load(mesh_path)
 
@@ -48,6 +49,7 @@ if __name__=='__main__':
     
     
     time_array = []
+    pose_array = []
 
     while True:
         start_time = time.time()
@@ -61,13 +63,17 @@ if __name__=='__main__':
         else:
             pose = est.track_one(rgb=color, depth=depth, K=reader.K, iteration=args.track_refine_iter)
         
+        os.makedirs(f'{debug_dir}/ob_in_cam', exist_ok=True)
+        np.savetxt(f'{debug_dir}/ob_in_cam/{reader.get_current_file()}.txt', pose.reshape(4,4))
+        np.save(f'{debug_dir}/ob_in_cam/{reader.get_current_file()}.npy', pose)
 
-        print(pose)
         center_pose = pose@np.linalg.inv(to_origin)
         vis = draw_posed_3d_box(reader.K, img=color, ob_in_cam=center_pose, bbox=bbox)
         vis = draw_xyz_axis(color, ob_in_cam=center_pose, scale=0.1, K=reader.K, thickness=3, transparency=0, is_input_rgb=True)
+        
         os.makedirs(f'{debug_dir}/track_vis', exist_ok=True)
         imageio.imwrite(f'{debug_dir}/track_vis/{reader.get_current_file()}.png', vis)
+        
         elapsed_time = time.time() - start_time
         time_array.append(elapsed_time)
 

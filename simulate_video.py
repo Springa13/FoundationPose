@@ -3,10 +3,10 @@ import sys
 import os
 
 # Define the frame rate (24fps)
-fps = 24
+fps = 15
 frame_time = 1 / fps  # Time for each frame (in seconds)
 
-dir_path = f'data/{sys.argv[1]}/'
+dir_path = f'data/{sys.argv[1]}'
 count = 0
 
 while True:
@@ -15,7 +15,7 @@ while True:
 
     # Your frame processing code goes here
     # For example, print something to simulate frame processing
-    os.rename(f'{dir_path}/rgb/{count:06}.png')
+    os.rename(f'{dir_path}/rgb/frame{count:06}.png')
     count += 1
 
     # Calculate how much time has passed and sleep to maintain the frame rate
