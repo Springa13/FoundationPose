@@ -16,8 +16,6 @@ source ~/.bashrc
 pip install gdown
 
 # Clone FoundationPose repository
-git clone https://github.com/Springa13/FoundationPose.git
-cd FoundationPose
 
 # Create necessary directories
 mkdir -p data weights/2023-10-28-18-33-37 weights/2024-01-11-20-02-45
