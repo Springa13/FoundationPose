@@ -2,6 +2,7 @@ from estimater import *
 from reader import *
 import time
 import argparse
+from rename_files import rename_files
 
 
 if __name__=='__main__':
@@ -21,7 +22,11 @@ if __name__=='__main__':
     scene_dir = f'{code_dir}/data/{args.test_scene_dir}'
     mesh_path = f'{code_dir}/data/{args.test_scene_dir}/mesh/{args.mesh_file}'
 
-    mesh = trimesh.load(args.mesh_file)
+    rename_files(f'{scene_dir}/rgb')
+    rename_files(f'{scene_dir}/depth')
+    rename_files(f'{scene_dir}/masks')
+
+    mesh = trimesh.load(mesh_path)
 
     debug = args.debug
     debug_dir = args.debug_dir
@@ -36,7 +41,7 @@ if __name__=='__main__':
     est = FoundationPose(model_pts=mesh.vertices, model_normals=mesh.vertex_normals, mesh=mesh, scorer=scorer, refiner=refiner, debug_dir=debug_dir, debug=debug, glctx=glctx)
     logging.info("estimator initialization done")
 
-    reader = DTwinReader(video_dir=args.test_scene_dir, shorter_side=10, zfar=np.inf)
+    reader = DTwinReader(video_dir=scene_dir, shorter_side=None, zfar=np.inf)
 
     while not reader.get_video_detected():
         reader.get_first_frame()

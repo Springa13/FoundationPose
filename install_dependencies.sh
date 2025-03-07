@@ -21,7 +21,7 @@ pip install gdown
 mkdir -p data weights/2023-10-28-18-33-37 weights/2024-01-11-20-02-45
 
 # Download weights
-gdown https://drive.google.com/uc?id=1AwV9sESDKMgXGUu2n1o0Pc4x2JGYdVB3 -O data
+gdown https://drive.google.com/uc?id=1AwV9sESDKMgXGUu2n1o0Pc4x2JGYdVB3 -O data/
 gdown https://drive.google.com/uc?id=1E9FPB5WFIBMLrOJqZLpoVOK4Mjzrrxhv -O weights/2023-10-28-18-33-37/
 gdown https://drive.google.com/uc?id=1477-st1s1TxXN6oqfM5ZnsQwd8BCzVg1 -O weights/2023-10-28-18-33-37/
 gdown https://drive.google.com/uc?id=1Zdjnkn4EHOI5_k08apofwRgTjWpai4E4 -O weights/2024-01-11-20-02-45/
@@ -44,11 +44,13 @@ python -m pip install --quiet --no-cache-dir git+https://github.com/NVlabs/nvdif
 # Install PyTorch3D
 python -m pip install --quiet --no-index --no-cache-dir pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py39_cu118_pyt200/download.html
 
+conda install -y -c conda-forge boost
+
 # Build extensions
 CMAKE_PREFIX_PATH=$CONDA_PREFIX/lib/python3.9/site-packages/pybind11/share/cmake/pybind11 bash build_all_conda.sh
 
 # Install Boost
-conda install -y -c conda-forge boost
+
 #conda install -c conda-forge gcc=11 gxx=11
 
 # Print completion message

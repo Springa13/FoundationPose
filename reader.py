@@ -12,6 +12,7 @@ class DTwinReader:
         self.shorter_side = shorter_side
     
     def get_first_frame(self):
+        
         if os.path.isfile(f"{self.video_dir}/rgb/{self.current_file}.png"):
            
             self.H,self.W = cv2.imread(f"{self.video_dir}/rgb/{self.current_file}.png").shape[:2]
@@ -54,7 +55,9 @@ class DTwinReader:
         return self.video_detected
 
     def get_next_frame_exists(self):
-        return os.path.isfile(f"{self.video_dir}/rgb/{self.current_file}.png")
+        rgbExists = os.path.isfile(f"{self.video_dir}/rgb/{self.current_file}.png")
+        depthExists = os.path.isfile(f"{self.video_dir}/depth/{self.current_file}.png")
+        return rgbExists and depthExists
     
     def get_count(self):
         return self.count
