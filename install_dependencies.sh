@@ -16,13 +16,14 @@ source ~/.bashrc
 pip install gdown
 
 # Clone FoundationPose repository
-git clone https://github.com/NVlabs/FoundationPose.git
+git clone https://github.com/Springa13/FoundationPose.git
 cd FoundationPose
 
 # Create necessary directories
-mkdir -p demo_data weights/2023-10-28-18-33-37 weights/2024-01-11-20-02-45
+mkdir -p data weights/2023-10-28-18-33-37 weights/2024-01-11-20-02-45
 
 # Download weights
+gdown https://drive.google.com/uc?id=1AwV9sESDKMgXGUu2n1o0Pc4x2JGYdVB3 -O data
 gdown https://drive.google.com/uc?id=1E9FPB5WFIBMLrOJqZLpoVOK4Mjzrrxhv -O weights/2023-10-28-18-33-37/
 gdown https://drive.google.com/uc?id=1477-st1s1TxXN6oqfM5ZnsQwd8BCzVg1 -O weights/2023-10-28-18-33-37/
 gdown https://drive.google.com/uc?id=1Zdjnkn4EHOI5_k08apofwRgTjWpai4E4 -O weights/2024-01-11-20-02-45/
