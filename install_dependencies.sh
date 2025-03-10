@@ -4,18 +4,16 @@
 set -e
 
 # Download and install Miniconda
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-bash miniconda.sh -b -p $HOME/miniconda
-export PATH="$HOME/miniconda/bin:$PATH"
-source ~/.bashrc
+# wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+# bash miniconda.sh -b -p $HOME/miniconda
+# export PATH="$HOME/miniconda/bin:$PATH"
+# source ~/.bashrc
 
 # wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run
 #sudo sh cuda_11.8.0_520.61.05_linux.run
 
 # Install gdown
 pip install gdown
-
-# Clone FoundationPose repository
 
 # Create necessary directories
 mkdir -p data weights/2023-10-28-18-33-37 weights/2024-01-11-20-02-45
@@ -29,6 +27,7 @@ gdown https://drive.google.com/uc?id=1kQkQG-q_VvLRozv30hyeLB7P_jiEEqiE -O weight
 
 # Create and activate Conda environment
 conda create -n foundationpose python=3.9
+source activate base
 conda activate foundationpose
 
 # Install Eigen3
@@ -41,15 +40,18 @@ python -m pip install -r requirements.txt
 # Install NVDiffRast
 python -m pip install --quiet --no-cache-dir git+https://github.com/NVlabs/nvdiffrast.git
 
+conda install -y -c conda-forge boost
+
 # Install PyTorch3D
 python -m pip install --quiet --no-index --no-cache-dir pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py39_cu118_pyt200/download.html
 
-conda install -y -c conda-forge boost
 
 # Build extensions
 CMAKE_PREFIX_PATH=$CONDA_PREFIX/lib/python3.9/site-packages/pybind11/share/cmake/pybind11 bash build_all_conda.sh
 
 # Install Boost
+pip uninstall numpy
+pip install --upgrade "numpy<1.29.0,>=1.22.4"
 
 #conda install -c conda-forge gcc=11 gxx=11
 

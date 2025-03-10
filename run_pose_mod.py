@@ -31,7 +31,7 @@ if __name__=='__main__':
 
     debug = args.debug
     debug_dir = args.debug_dir
-    os.system(f'rm -rf {debug_dir}/* && mkdir -p {debug_dir}/track_vis')
+    os.system(f'rm -rf {debug_dir}/* && mkdir -p {debug_dir}/track_vis {debug_dir}/ob_in_cam')
 
     to_origin, extents = trimesh.bounds.oriented_bounds(mesh)
     bbox = np.stack([-extents/2, extents/2], axis=0).reshape(2,3)
@@ -63,16 +63,18 @@ if __name__=='__main__':
         else:
             pose = est.track_one(rgb=color, depth=depth, K=reader.K, iteration=args.track_refine_iter)
         
+        #pose[0] = pose[5] = pose[10] = 1
+        #pose[1] = pose[2] = pose[4] = pose[6] = pose[8] = pose[9] = 0 
         os.makedirs(f'{debug_dir}/ob_in_cam', exist_ok=True)
-        np.savetxt(f'{debug_dir}/ob_in_cam/{reader.get_current_file()}.txt', pose.reshape(4,4))
-        np.save(f'{debug_dir}/ob_in_cam/{reader.get_current_file()}.npy', pose)
+        np.savetxt(f'{debug_dir}/ob_in_cam/frame{reader.get_count():06}.txt', pose.reshape(4,4))
+        np.save(f'{debug_dir}/ob_in_cam/frame{reader.get_count():06}.npy', pose.reshape(4,4))
 
         center_pose = pose@np.linalg.inv(to_origin)
         vis = draw_posed_3d_box(reader.K, img=color, ob_in_cam=center_pose, bbox=bbox)
         vis = draw_xyz_axis(color, ob_in_cam=center_pose, scale=0.1, K=reader.K, thickness=3, transparency=0, is_input_rgb=True)
         
         os.makedirs(f'{debug_dir}/track_vis', exist_ok=True)
-        imageio.imwrite(f'{debug_dir}/track_vis/{reader.get_current_file()}.png', vis)
+        imageio.imwrite(f'{debug_dir}/track_vis/frame{reader.get_count():06}.png', vis)
         
         elapsed_time = time.time() - start_time
         time_array.append(elapsed_time)
