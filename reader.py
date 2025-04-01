@@ -55,7 +55,7 @@ class DTwinReader:
     def get_next_frame_exists(self):
         rgbExists = os.path.isfile(self.color_files[self.count])
         depthExists = os.path.isfile(self.color_files[self.count].replace('rgb','depth'))
-        return rgbExists and depthExists
+        return rgbExists
     
     def get_count(self):
         return self.count

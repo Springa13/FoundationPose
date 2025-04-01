@@ -66,7 +66,7 @@ if __name__=='__main__':
         #pose[0] = pose[5] = pose[10] = 1
         #pose[1] = pose[2] = pose[4] = pose[6] = pose[8] = pose[9] = 0 
         os.makedirs(f'{debug_dir}/ob_in_cam', exist_ok=True)
-        np.savetxt(f'{debug_dir}/ob_in_cam/frame{reader.get_count():06}.txt', pose.reshape(4,4))
+        # np.savetxt(f'{debug_dir}/ob_in_cam/frame{reader.get_count():06}.txt', pose.reshape(4,4))
         np.save(f'{debug_dir}/ob_in_cam/frame{reader.get_count():06}.npy', pose.reshape(4,4))
 
         center_pose = pose@np.linalg.inv(to_origin)
