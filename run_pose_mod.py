@@ -3,6 +3,7 @@ from reader import *
 import time
 import argparse
 from rename_files import rename_files
+from simulate_video import *
 
 
 if __name__=='__main__':
@@ -14,7 +15,6 @@ if __name__=='__main__':
     parser.add_argument('--track_refine_iter', type=int, default=2)
     parser.add_argument('--debug', type=int, default=2)
     parser.add_argument('--debug_dir', type=str, default=f'{code_dir}/debug')
-    parser.add_argument('--simulate', type=bool, default=False)
     args = parser.parse_args()
 
     set_logging_format()
@@ -42,7 +42,7 @@ if __name__=='__main__':
     est = FoundationPose(model_pts=mesh.vertices, model_normals=mesh.vertex_normals, mesh=mesh, scorer=scorer, refiner=refiner, debug_dir=debug_dir, debug=debug, glctx=glctx)
     logging.info("estimator initialization done")
 
-    reader = DTwinReader(video_dir=scene_dir, shorter_side=None, zfar=np.inf)
+    reader = DTwinReader(video_dir=scene_dir, shorter_side=None, zfar=np.inf)   
 
     while not reader.get_video_detected():
         reader.get_first_frame()
@@ -65,11 +65,12 @@ if __name__=='__main__':
         
         #pose[0] = pose[5] = pose[10] = 1
         #pose[1] = pose[2] = pose[4] = pose[6] = pose[8] = pose[9] = 0 
-        os.makedirs(f'{debug_dir}/ob_in_cam', exist_ok=True)
+        os.makedirs(f'{debug_dir}/poses', exist_ok=True)
         # np.savetxt(f'{debug_dir}/ob_in_cam/frame{reader.get_count():06}.txt', pose.reshape(4,4))
-        np.save(f'{debug_dir}/ob_in_cam/frame{reader.get_count():06}.npy', pose.reshape(4,4))
+        np.save(f'{debug_dir}/poses/frame{reader.get_count():06}.npy', pose.reshape(4,4))
 
         center_pose = pose@np.linalg.inv(to_origin)
+        # np.save(f'{debug_dir}/poses/frame{reader.get_count():06}.npy', center_pose.reshape(4,4))
         vis = draw_posed_3d_box(reader.K, img=color, ob_in_cam=center_pose, bbox=bbox)
         vis = draw_xyz_axis(color, ob_in_cam=center_pose, scale=0.1, K=reader.K, thickness=3, transparency=0, is_input_rgb=True)
         

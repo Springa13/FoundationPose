@@ -10,7 +10,6 @@ for i in f:
 f.close()
 print(timing_array)
 
-
 count = 0
 
 while True:

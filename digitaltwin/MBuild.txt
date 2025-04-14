@@ -1,0 +1,5 @@
+name: game
+src: main.cpp
+include_dir: libs
+lib_dir: libs
+libs: raylib opengl32 gdi32 winmm

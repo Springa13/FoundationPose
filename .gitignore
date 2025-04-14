@@ -42,6 +42,13 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+digitaltwin/headphones/*
+digitaltwin/libs/*
+digitaltwin/mustard/*
+digitaltwin/ob_in_cam_bin/*
+digitaltwin/spider/*
+
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
