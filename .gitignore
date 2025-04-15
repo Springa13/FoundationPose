@@ -22,7 +22,7 @@ weights/*
 downloads/
 eggs/
 .eggs/
-digitaltwin/*
+digitaltwin/
 lib/
 lib64/
 parts/
