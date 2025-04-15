@@ -22,11 +22,7 @@ weights/*
 downloads/
 eggs/
 .eggs/
-digitaltwin/headphones/*
-digitaltwin/libs/*
-digitaltwin/mustard/*
-digitaltwin/ob_in_cam_bin/*
-digitaltwin/spider/*
+digitaltwin/
 lib/
 lib64/
 parts/
