@@ -14,9 +14,9 @@
 #include <vector>
 #include <cfloat>
 
-
-void LoadMaterialsFromMtl(Model *model, const char *mtlFile, const char *folderPath);
+void LoadMaterialsFromMtl(Model *model, std::string mtlFile, std::string folderPath);
 Matrix loadBin(int count);
+bool newFrameDetected(int count);
 BoundingBox TransformBoundingBox(BoundingBox bbox, Matrix transform);
 
-#endif /* MY_CLASS_H */
+#endif /* MAIN_H */

@@ -1,4 +1,4 @@
-name: game
+name: FPDT
 src: main.cpp
 include_dir: libs
 lib_dir: libs

@@ -1,6 +1,7 @@
 #include "main.h"
 #include <sstream>
 #include <iomanip>
+#include <filesystem>
 
 Vector3 MatrixToEuler(Matrix mat) {
     Vector3 euler;
@@ -27,24 +28,33 @@ Vector3 MatrixToEuler(Matrix mat) {
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
     
     // Initialize window and 3D camera
     InitWindow(800, 600, "Raylib OBJ Model Loader");
-    
-    const char* folderPath = "mustard";
-    const char* objName = "textured_simple.obj";
-    const char* mtlName = "textured_simple.mtl";
+
+    char *data_folder = argv[1];
+
+    std::stringstream folderPathTemplate;
+    folderPathTemplate << "../data/" << data_folder << "/mesh";
+    std::string folderPath = folderPathTemplate.str(); 
+
+    std::string objName = "textured_simple.obj";
+    std::string mtlName = "textured_simple.mtl";
 
     // Load the OBJ model
-    char objPath[256]; 
-    snprintf(objPath, sizeof(objPath), "%s/%s", folderPath, objName);
-    Model model = LoadModel(objPath);
+    std::stringstream objPathTemplate;
+    objPathTemplate << folderPath << "/" << objName;
+    std::string objPath = objPathTemplate.str(); 
+    
+    Model model = LoadModel(objPath.c_str());
 
     
     // Load materials from .mtl file
-    char mtlPath[256]; 
-    snprintf(mtlPath, sizeof(objPath), "%s/%s", folderPath, mtlName);
+    std::stringstream mtlPathTemplate;
+    mtlPathTemplate << folderPath << "/" << mtlName;
+    std::string mtlPath = mtlPathTemplate.str(); 
+
     LoadMaterialsFromMtl(&model, mtlPath, folderPath);
 
     // Get the bounding box
@@ -83,6 +93,8 @@ int main() {
     float rotationX = 0.0f; // Rotation around X-axis (up/down)
     float rotationZ = 0.0f;
 
+    int frameNumber = 0;
+
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
@@ -111,9 +123,8 @@ int main() {
         Matrix rotationXMatrix = MatrixRotateX(DEG2RAD * rotationX);
         Matrix rotationZMatrix = MatrixRotateZ(DEG2RAD * rotationZ);
         
-        
         // Offset and apply transformations
-        Matrix mat = loadBin(0);
+        Matrix mat = loadBin(frameNumber);
         Vector3 euler = MatrixToEuler(mat);
         std::cout << "Euler angles: X = " << (RAD2DEG * euler.x) << ", Y = " << (RAD2DEG * euler.y) << ", Z = " << (RAD2DEG * euler.z) << std::endl;
         
@@ -123,8 +134,6 @@ int main() {
         Matrix zrot = MatrixRotateZ(PI / 8);  // Convert Y-up to Z-up
         //newmat = MatrixMultiply(zrot, newmat);
 
-
-        
         Matrix rotate = MatrixRotateXYZ(euler);
         newmat = MatrixMultiply(newmat, rotate);
         model.transform = MatrixMultiply(MatrixTranslate(modelOffset.x, modelOffset.y, modelOffset.z), newmat);        
@@ -149,6 +158,10 @@ int main() {
         DrawLine3D(modelPos, forward, BLUE);// Model Z-axis
         // DrawGrid(10, 1.0f);
         EndMode3D();
+
+        if (newFrameDetected(frameNumber+1)) {
+            frameNumber++;
+        }
         
         DrawText("Use mouse to orbit camera", 10, 10, 20, DARKGRAY);
         EndDrawing();
@@ -162,9 +175,9 @@ int main() {
 }
 
 // Function to load textures from .mtl file and apply to model
-void LoadMaterialsFromMtl(Model *model, const char *mtlFile, const char* folderPath)
+void LoadMaterialsFromMtl(Model *model, std::string mtlFile, std::string folderPath)
 {
-    FILE *file = fopen(mtlFile, "r");
+    FILE *file = fopen(mtlFile.c_str(), "r");
     if (file == NULL)
     {
         printf("Failed to load .mtl file!\n");
@@ -185,11 +198,12 @@ void LoadMaterialsFromMtl(Model *model, const char *mtlFile, const char* folderP
             char textureName[256];
             sscanf(line, "map_Kd %s", textureName);
 
-            char texturePath[256];
-            snprintf(texturePath, sizeof(texturePath), "%s/%s", folderPath, textureName);
+            std::stringstream texturePathTemplate;
+            texturePathTemplate << folderPath << "/" << textureName;
+            std::string texturePath = texturePathTemplate.str();            
             
             // Check the texture path and load the texture
-            Texture2D texture = LoadTexture(texturePath);  // Load diffuse texture
+            Texture2D texture = LoadTexture(texturePath.c_str());  // Load diffuse texture
             if (currentMaterial >= 0 && currentMaterial < model->materialCount)
             {
                 model->materials[currentMaterial].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
@@ -200,11 +214,12 @@ void LoadMaterialsFromMtl(Model *model, const char *mtlFile, const char* folderP
             char textureName[256];
             sscanf(line, "map_Ks %s", textureName);
 
-            char texturePath[256];
-            snprintf(texturePath, sizeof(texturePath), "%s/%s", folderPath, textureName);
+            std::stringstream texturePathTemplate;
+            texturePathTemplate << folderPath << "/" << textureName;
+            std::string texturePath = texturePathTemplate.str(); 
 
             // Load specular texture
-            Texture2D texture = LoadTexture(texturePath);  
+            Texture2D texture = LoadTexture(texturePath.c_str());  
             if (currentMaterial >= 0 && currentMaterial < model->materialCount)
             {
                 model->materials[currentMaterial].maps[MATERIAL_MAP_SPECULAR].texture = texture;
@@ -215,11 +230,27 @@ void LoadMaterialsFromMtl(Model *model, const char *mtlFile, const char* folderP
     fclose(file);
 }
 
+bool newFrameDetected(int count) {
+    std::stringstream ss;
+    ss << "../output/poses/frame" << std::setw(6) << std::setfill('0') << count << ".bin";
+    std::string result = ss.str();
+
+    bool detected;
+
+    if (std::filesystem::exists(result)) {
+        detected = true;
+    } else {
+        detected = false;
+    }
+
+    return detected;
+}
+
 Matrix loadBin(int count)  {
     std::stringstream ss;
-    ss << "ob_in_cam_bin/frame" << std::setw(6) << std::setfill('0') << count << ".bin";
-
+    ss << "../output/poses/frame" << std::setw(6) << std::setfill('0') << count << ".bin";
     std::string result = ss.str();
+
     std::ifstream file(result, std::ios::binary);
     if (!file) {
         std::cerr << "File not found!\n";
