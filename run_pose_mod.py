@@ -13,8 +13,8 @@ if __name__=='__main__':
     parser.add_argument('--test_scene_dir', type=str, default=f'mustard')
     parser.add_argument('--est_refine_iter', type=int, default=5)
     parser.add_argument('--track_refine_iter', type=int, default=2)
-    parser.add_argument('--debug', type=int, default=2)
-    parser.add_argument('--debug_dir', type=str, default=f'{code_dir}/debug')
+    parser.add_argument('--output_dir', type=str, default=f'{code_dir}/output')
+    parser.add_argument('--frame_output', type=bool, default=False)
     args = parser.parse_args()
 
     set_logging_format()
@@ -29,9 +29,9 @@ if __name__=='__main__':
 
     mesh = trimesh.load(mesh_path)
 
-    debug = args.debug
-    debug_dir = args.debug_dir
-    os.system(f'rm -rf {debug_dir}/* && mkdir -p {debug_dir}/track_vis {debug_dir}/ob_in_cam')
+    output_dir = args.output_dir
+    frame_output = args.frame_output
+    os.system(f'rm -rf {output_dir}/* && mkdir -p {output_dir}/track_vis {output_dir}/poses')
 
     to_origin, extents = trimesh.bounds.oriented_bounds(mesh)
     bbox = np.stack([-extents/2, extents/2], axis=0).reshape(2,3)
@@ -65,17 +65,18 @@ if __name__=='__main__':
         
         #pose[0] = pose[5] = pose[10] = 1
         #pose[1] = pose[2] = pose[4] = pose[6] = pose[8] = pose[9] = 0 
-        os.makedirs(f'{debug_dir}/poses', exist_ok=True)
+        os.makedirs(f'{output_dir}/poses', exist_ok=True)
         # np.savetxt(f'{debug_dir}/ob_in_cam/frame{reader.get_count():06}.txt', pose.reshape(4,4))
-        np.save(f'{debug_dir}/poses/frame{reader.get_count():06}.npy', pose.reshape(4,4))
+        pose.astype('float32').tofile(f'{output_dir}/poses/frame{reader.get_count():06}.bin')
+        #np.save(f'{output_dir}/poses/frame{reader.get_count():06}.npy', pose.reshape(4,4))
 
         center_pose = pose@np.linalg.inv(to_origin)
-        # np.save(f'{debug_dir}/poses/frame{reader.get_count():06}.npy', center_pose.reshape(4,4))
         vis = draw_posed_3d_box(reader.K, img=color, ob_in_cam=center_pose, bbox=bbox)
         vis = draw_xyz_axis(color, ob_in_cam=center_pose, scale=0.1, K=reader.K, thickness=3, transparency=0, is_input_rgb=True)
         
-        os.makedirs(f'{debug_dir}/track_vis', exist_ok=True)
-        imageio.imwrite(f'{debug_dir}/track_vis/frame{reader.get_count():06}.png', vis)
+        if (frame_output):
+            os.makedirs(f'{output_dir}/track_vis', exist_ok=True)
+            imageio.imwrite(f'{output_dir}/track_vis/frame{reader.get_count():06}.png', vis)
         
         elapsed_time = time.time() - start_time
         time_array.append(elapsed_time)
@@ -85,7 +86,7 @@ if __name__=='__main__':
         if not reader.get_next_frame_exists():
             break
     
-    f = open(f'{debug_dir}/timing.txt', "w")
+    f = open(f'{output_dir}/timing.txt', "w")
     for i in time_array:
         f.write(f"{i}\n")
     f.close()
