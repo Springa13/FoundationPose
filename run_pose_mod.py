@@ -2,9 +2,9 @@ from estimater import *
 from reader import *
 import time
 import argparse
-from rename_files import rename_files
 from simulate_video import *
 from pathlib import Path
+from mask_gen import create_mask
 
 
 if __name__=='__main__':
@@ -15,6 +15,7 @@ if __name__=='__main__':
     parser.add_argument('--track_refine_iter', type=int, default=2)
     parser.add_argument('--output_dir', type=str, default='output')
     parser.add_argument('--frame_output', type=bool, default=False)
+    parser.add_argument('--simulate', type=bool, default=False)
     args = parser.parse_args()
 
     set_logging_format()
@@ -24,10 +25,7 @@ if __name__=='__main__':
     mesh_folder = Path(f'{code_dir}/data/{args.test_scene_dir}/mesh')
     obj_files = list(mesh_folder.glob("*.obj"))
     mesh_path = f'{code_dir}/{obj_files[0]}'
-
-    rename_files(f'{scene_dir}/rgb', args.simulate)
-    rename_files(f'{scene_dir}/depth', args.simulate)
-    rename_files(f'{scene_dir}/masks', args.simulate)
+    simulation = args.simulate
 
     mesh = trimesh.load(mesh_path)
 
@@ -46,8 +44,14 @@ if __name__=='__main__':
 
     reader = DTwinReader(video_dir=scene_dir, shorter_side=None, zfar=np.inf)   
 
+    if (simulation):
+        rename_simulation_images(args.test_scene_dir)
+
     while not reader.get_video_detected():
         reader.get_first_frame()
+    
+    if not simulation:
+        create_mask(args.test_scene_dir)
     
     time_array = []
     pose_array = []
@@ -80,7 +84,10 @@ if __name__=='__main__':
         elapsed_time = time.time() - start_time
         time_array.append(elapsed_time)
 
-        reader.increment_count()
+        if reader.get_count() == 0:
+            reader.get_catch_up_frame()
+        else:
+            reader.increment_count()
         
         if not reader.get_next_frame_exists():
             break

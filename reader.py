@@ -15,7 +15,7 @@ class DTwinReader:
         
         if os.path.isfile(f'{self.video_dir}/rgb/frame{self.count:06}.png'):
            
-            self.H,self.W = cv2.imread(self.color_files[self.count]).shape[:2]
+            self.H,self.W = cv2.imread(f'{self.video_dir}/rgb/frame{self.count:06}.png').shape[:2]
             
             if self.shorter_side is not None:
                 self.downscale = self.shorter_side/min(self.H, self.W)
@@ -59,5 +59,14 @@ class DTwinReader:
     
     def get_count(self):
         return self.count
+    
+    def set_count(self, count):
+        self.count = count
+    
+    def get_catch_up_frame(self):
+        all_files = sorted(glob.glob(f'{self.video_dir}/rgb/*.png'))
+        self.set_count(int(os.path.basename(all_files[len(all_files)-1])[5:11]))
+
+
         
        

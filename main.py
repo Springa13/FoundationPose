@@ -1,6 +1,7 @@
 import subprocess
 from pathlib import Path
 import os
+import glob
 
 def run_digital_twin(data_folder):
     print("Running digital twin program...")
@@ -9,15 +10,23 @@ def run_digital_twin(data_folder):
     stderr=subprocess.DEVNULL)
     return dt_process
 
-def run_foundation_pose(data_folder):
+def run_foundation_pose(data_folder, simulate):
     print("Running FoundationPose...")
-    fp_process = subprocess.Popen(["python", "run_pose_mod.py", data_folder])
+    fp_process = subprocess.Popen(["python", "run_pose_mod.py", '--test_scene_dir', data_folder, '--simulate', simulate])
     return fp_process
 
-def run_video():
+def run_video(data_folder):
+    fps = int(input('Target FPS: '))
+    res = input('Target Resolution (144p, 240p, 360p, 480p, 720p): ')
     print("Taking video...")
-    v_process = subprocess.Popen(["python", "take_video.py"])
+    v_process = subprocess.Popen(["python", "take_video.py", data_folder, fps, res])
     return v_process
+
+def run_simulate_video(data_folder):
+    fps = int(input('Target FPS: '))
+    print("Running video simulation...")
+    sv_process = subprocess.Popen(["python", "simulate_video.py", data_folder, fps])
+    return sv_process
 
 default_launch = input("Use default launch sequence (y/n): ")
 
@@ -32,17 +41,18 @@ if default_launch == 'y':
     run_foundation_pose(data_folder)
     run_video()
 else:
-    dt_running = False
-    fp_running = False
-    v_running = False
+    
     dt_process = None
+    fp_process = None
+    v_process = None
+    sv_process = None
     while True:
         print("--------------------------------")
-        print("Select program to run/terminate:\n\n\t1. digital twin\n\t2. pose estimation\n\t3. video\n\tx. exit")
+        print("Select program to run/terminate:\n\n\t1. digital twin\n\t2. pose estimation\n\t3. video\n\t4. simulate video\n\tx. exit")
         print("--------------------------------")
         selection = input("Select: ")
 
-        while selection != '1' and selection != '2' and selection != '3' and selection != 'x':
+        while selection not in ['1', '2', '3', '4', 'x']:
             selection = input("Select: ")
         
         if selection == '1':
@@ -53,17 +63,22 @@ else:
 
         elif selection == '2':
             if fp_process is None or fp_process.poll() is not None:
-                fp_process = run_foundation_pose(data_folder)
+                fp_process = run_foundation_pose(data_folder, False)
             else:
                 fp_process.terminate()
             
         elif selection == '3':
-            if (v_running):
-                v_process.terminate()
-                fp_running = False
+            if v_process is None or v_process.poll() is not None:
+                v_process = run_video(data_folder)
             else:
-                v_process = run_video()
-                v_running = True
+                v_process.terminate()
+            
+        elif selection == '4':
+            if sv_process is None or sv_process.poll() is not None:
+                sv_process = run_simulate_video(data_folder, True)
+            else:
+                sv_process.terminate()
+            
             
         elif selection == 'x':
             break
