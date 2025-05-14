@@ -1,30 +1,41 @@
-import os
 import time
+import sys
+import os
+import glob
 
-timing_array = []
-f = open(f'debug/timing.txt', "r")
-for i in f:
-    line = f.readline().rstrip()
-    timing_array.append(int(line))
+def rename_simulation_bins(scene_dir):
+    print("Preparing poses...")
+    dir_path = f'output/{scene_dir}/poses'
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    data_dir = os.path.join(script_dir, dir_path)
+
+    png_files = sorted(glob.glob(os.path.join(data_dir, '*.bin')))
     
-f.close()
-print(timing_array)
+    for i, old_path in enumerate(png_files):
+        new_name = f'sim{i:06}.bin'
+        new_path = os.path.join(data_dir, new_name)
+        if (old_path != new_path):
+            os.rename(old_path, new_path)
 
-count = 0
+def simulate_bin_output(scene_dir):
+    print("Running pose simulation...")
+    timing_array = []
 
-while True:
-    old_path = f'debug/ob_in_cam/frame{count:06}.npy'
-    if not os.path.exists(old_path):
-        break
+    with open(f'output/{scene_dir}/timing.txt', "r", newline="") as file:  # Handles all line endings
+        for line in file:
+            timing_array.append(float(line))
 
-    new_path = f'debug/ob_in_cam/fake{count:06}.npy'
-    os.rename(old_path, new_path)
+    dir_path = f'output/{scene_dir}/poses'
 
-while True:
-    old_path = f'debug/ob_in_cam/fake{count:06}.npy'
-    if not os.path.exists(old_path):
-        break
-    time.sleep(timing_array[count])
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    data_dir = os.path.join(script_dir, dir_path)
 
-    new_path = f'debug/ob_in_cam/frame{count:06}.npy'
-    os.rename(old_path, new_path)
+    bin_files = sorted(glob.glob(os.path.join(data_dir, '*.bin')))
+
+    for i, old_path in enumerate(bin_files):
+        # time.sleep(timing_array[i])
+        new_name = f'frame{i:06}.bin'
+        new_path = os.path.join(data_dir, new_name)
+        os.rename(old_path, new_path)
+

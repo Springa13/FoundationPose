@@ -22,13 +22,13 @@ def click_event(event, x, y, flags, param):
 def display_mask(image, mask):
     # Create a color mask
     color_mask = np.zeros_like(image)
-    color_mask[mask > 0] = [0, 255, 0]  # Green mask
+    color_mask[mask > 0] = [0, 0, 255]  # Green mask
 
     # Blend with original image
-    blended = cv2.addWeighted(image, 0.7, color_mask, 0.3, 0)
+    blended = cv2.addWeighted(image, 0.8, color_mask, 0.4, 0)
     
     # Show the result
-    cv2.imshow("Image", blended)
+    cv2.imshow("frame000000", blended)
 
 def save_mask(mask_path, image, mask):
     # Create white mask on black background
@@ -59,10 +59,10 @@ def create_mask(data_folder):
     predictor.set_image(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     
     # Display image and set mouse callback
-    cv2.imshow("Image", image)
-    cv2.setMouseCallback("Image", click_event)
+    cv2.imshow("frame000000", image)
+    cv2.setMouseCallback("frame000000", click_event)
     
-    print("Click on an object to segment it. Press 'r' to reset. Press 'q' to save and quit.")
+    print("Click on an object to segment it. Press 'r' to reset. Press 's' to save. Press 'q' to save and quit.")
     
     input_points = []
     input_labels = []
@@ -84,16 +84,17 @@ def create_mask(data_folder):
             
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
-            save_mask(mask_path, image, masks[0])
             break
-        if key == ord('r'):
+        elif key == ord('s'):
+            save_mask(mask_path, image, masks[0])
+        elif key == ord('r'):
             input_points = []
             input_labels = []
             clicked_event = False
-            cv2.imshow("Image", image)
+            cv2.imshow("frame000000", image)
             
         
     cv2.destroyAllWindows()
         
       
-# create_mask('mustard')
+create_mask('mustard')

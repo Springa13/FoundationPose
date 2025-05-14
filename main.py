@@ -2,6 +2,7 @@ import subprocess
 from pathlib import Path
 import os
 import glob
+from simulate_pose import *
 
 def run_digital_twin(data_folder):
     print("Running digital twin program...")
@@ -28,6 +29,16 @@ def run_simulate_video(data_folder):
     sv_process = subprocess.Popen(["python", "simulate_video.py", data_folder, fps])
     return sv_process
 
+def run_simulate_pose(data_folder):
+    
+    rename_simulation_bins(data_folder)
+    dt_process = run_digital_twin(data_folder)
+    time.sleep(10)
+    simulate_bin_output(data_folder)
+    time.sleep(2)
+    dt_process.terminate()
+    
+
 default_launch = input("Use default launch sequence (y/n): ")
 
 while default_launch != 'y' and default_launch != 'n':
@@ -48,11 +59,11 @@ else:
     sv_process = None
     while True:
         print("--------------------------------")
-        print("Select program to run/terminate:\n\n\t1. digital twin\n\t2. pose estimation\n\t3. video\n\t4. simulate video\n\tx. exit")
+        print("Select program to run/terminate:\n\n\t1. digital twin\n\t2. pose estimation\n\t3. video\n\t4. simulate video\n\t5. simulate pose\n\tx. exit")
         print("--------------------------------")
         selection = input("Select: ")
 
-        while selection not in ['1', '2', '3', '4', 'x']:
+        while selection not in ['1', '2', '3', '4', '5', 'x']:
             selection = input("Select: ")
         
         if selection == '1':
@@ -78,6 +89,9 @@ else:
                 sv_process = run_simulate_video(data_folder, True)
             else:
                 sv_process.terminate()
+        elif selection == '5':
+            run_simulate_pose(data_folder)
+            
             
             
         elif selection == 'x':

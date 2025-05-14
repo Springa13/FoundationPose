@@ -15,6 +15,10 @@ import os
 import shutil
 import sys
 
+if len(sys.argv) != 4:
+    print("Incorrect number of arguments:")
+    print("'python take_video.py [output_dir] [fps] [resolution]'")
+    exit(1)
 # Create a pipeline
 pipeline = rs.pipeline()
 
@@ -63,6 +67,21 @@ depth_sensor = profile.get_device().first_depth_sensor()
 depth_scale = depth_sensor.get_depth_scale()
 print("Depth Scale is: " , depth_scale)
 
+depth_stream_profile = profile.get_stream(rs.stream.depth).as_video_stream_profile()
+intrinsics = depth_stream_profile.get_intrinsics()
+
+fx = intrinsics.fx
+fy = intrinsics.fy
+cx = intrinsics.ppx
+cy = intrinsics.ppy
+
+# Create the intrinsic matrix
+K = np.array([
+    [fx,  0, cx],
+    [ 0, fy, cy],
+    [ 0,  0,  1]
+])
+
 # Create an align object
 # rs.align allows us to perform alignment of depth frames to others frames
 # The "align_to" is the stream type to which we plan to align depth frames.
@@ -71,6 +90,9 @@ align = rs.align(align_to)
 count = 0
 
 dir_path = f'data/{sys.argv[1]}'
+
+# Save to a text file
+np.savetxt(f"{dir_path}/cam_K.txt", K, fmt="%.6f", delimiter=' ')
 
 try:
     os.mkdir(dir_path)

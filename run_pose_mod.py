@@ -44,9 +44,6 @@ if __name__=='__main__':
 
     reader = DTwinReader(video_dir=scene_dir, shorter_side=None, zfar=np.inf)   
 
-    if (simulation):
-        rename_simulation_images(args.test_scene_dir)
-
     while not reader.get_video_detected():
         reader.get_first_frame()
     
@@ -71,19 +68,19 @@ if __name__=='__main__':
         
         # np.save(f'{output_dir}/poses/frame{reader.get_count():06}.npy', pose.reshape(4,4))
         pose.astype('float32').tofile(f'{output_dir}/poses/frame{reader.get_count():06}.bin')
+        pose_array.append(pose)
         
         center_pose = pose@np.linalg.inv(to_origin)
         vis = draw_posed_3d_box(reader.K, img=color, ob_in_cam=center_pose, bbox=bbox)
         vis = draw_xyz_axis(color, ob_in_cam=center_pose, scale=0.1, K=reader.K, thickness=3, transparency=0, is_input_rgb=True)
         
-        if (frame_output):
-            np.savetxt(f'{output_dir}/poses/frame{reader.get_count():06}.txt', pose.reshape(4,4))
-            os.makedirs(f'{output_dir}/track_vis', exist_ok=True)
-            imageio.imwrite(f'{output_dir}/track_vis/frame{reader.get_count():06}.png', vis)
-        
         elapsed_time = time.time() - start_time
         time_array.append(elapsed_time)
 
+        if (frame_output):
+            os.makedirs(f'{output_dir}/track_vis', exist_ok=True)
+            imageio.imwrite(f'{output_dir}/track_vis/frame{reader.get_count():06}.png', vis)
+        
         if reader.get_count() == 0:
             reader.get_catch_up_frame()
         else:
@@ -96,4 +93,7 @@ if __name__=='__main__':
     for i in time_array:
         f.write(f"{i}\n")
     f.close()
+
+    with open("robot_pose.pkl", "wb") as f:
+        pickle.dump(pose_array, f)
     
