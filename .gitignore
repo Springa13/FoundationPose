@@ -80,6 +80,7 @@ weights/
 weights/
 video_data/
 data/
+output/
 # Translations
 *.mo
 *.pot
