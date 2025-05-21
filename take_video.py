@@ -15,9 +15,9 @@ import os
 import shutil
 import sys
 
-if len(sys.argv) != 4:
+if len(sys.argv) != 2:
     print("Incorrect number of arguments:")
-    print("'python take_video.py [output_dir] [fps] [resolution]'")
+    print("'python take_video.py [output_dir]'")
     exit(1)
 # Create a pipeline
 pipeline = rs.pipeline()
@@ -41,23 +41,23 @@ if not found_rgb:
     print("The demo requires Depth camera with Color sensor")
     exit(0)
 
-fps = sys.argv[2]
-res = sys.argv[3]
-x_res, y_res = 0
-if (res == '144p'):
-    x_res, y_res = 256, 144
-elif (res == '240p'):
-    x_res, y_res = 320, 240
-elif (res == '360p'):
-    x_res, y_res = 640, 360
-elif (res == '480p'):
-    x_res, y_res = 854, 480
-elif (res == '720p'):
-    x_res, y_res = 1280, 720
+# fps = sys.argv[2]
+# res = sys.argv[3]
+# x_res, y_res = 0
+# if (res == '144p'):
+#     x_res, y_res = 256, 144
+# elif (res == '240p'):
+#     x_res, y_res = 320, 240
+# elif (res == '360p'):
+#     x_res, y_res = 640, 360
+# elif (res == '480p'):
+#     x_res, y_res = 854, 480
+# elif (res == '720p'):
+#     x_res, y_res = 1280, 720
 
 
-config.enable_stream(rs.stream.depth, x_res, y_res, rs.format.z16, fps)
-config.enable_stream(rs.stream.color, x_res, y_res, rs.format.bgr8, fps)
+config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
+config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 
 # Start streaming
 profile = pipeline.start(config)

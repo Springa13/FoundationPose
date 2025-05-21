@@ -1,0 +1,58 @@
+MODULE MonitorPos
+    ! Communication variables
+    VAR socketdev client_socket;
+    VAR socketdev server_socket;
+    VAR bool connected := FALSE;
+    
+    ! Position reporting procedure
+    PROC report_position()
+        VAR pos current_pos;
+        VAR string pos_string;
+        
+        WHILE TRUE DO
+            ! Get current tool position
+            current_pos := CRobT(\Tool:=tool0 \WObj:=wobj0);
+            
+            ! Format position string (X,Y,Z in mm)
+            pos_string := NumToStr(current_pos.trans.x, 1) + "," +
+                          NumToStr(current_pos.trans.y, 1) + "," +
+                          NumToStr(current_pos.trans.z, 1);
+            
+            ! Send to connected client
+            IF connected THEN
+                SocketSend client_socket \Str:=pos_string;
+            ENDIF
+            
+            ! Wait before next report (adjust as needed)
+            WaitTime 0.1;
+        ENDWHILE;
+    ERROR
+        ! Handle errors
+        connected := FALSE;
+        RETRY;
+    ENDPROC
+    
+    ! Main server procedure
+    PROC main()
+        ! Setup socket server
+        SocketCreate server_socket;
+        SocketBind server_socket, "0.0.0.0", 3000;
+        SocketListen server_socket;
+        
+        ! Start position reporting in background
+        StartReport;
+        
+        ! Accept client connections
+        WHILE TRUE DO
+            SocketAccept server_socket, client_socket;
+            connected := TRUE;
+        ENDWHILE;
+    ENDPROC
+    
+    ! Background task for reporting
+    LOCAL TASK StartReport
+        PROC StartReport()
+            report_position;
+        ENDPROC
+    ENDTASK
+ENDMODULE
