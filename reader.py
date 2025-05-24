@@ -54,7 +54,6 @@ class DTwinReader:
 
     def get_next_frame_exists(self):
         rgbExists = os.path.isfile(f'{self.video_dir}/rgb/frame{self.count:06}.png')
-        depthExists = os.path.isfile(f'{self.video_dir}/depth/frame{self.count:06}.png')
         return rgbExists
     
     def get_count(self):
@@ -66,6 +65,10 @@ class DTwinReader:
     def get_catch_up_frame(self):
         all_files = sorted(glob.glob(f'{self.video_dir}/rgb/*.png'))
         self.set_count(int(os.path.basename(all_files[len(all_files)-1])[5:11]))
+
+    def get_mask_exists(self):
+        rgbExists = os.path.isfile(f'{self.video_dir}/rgb/frame{self.count:06}.png')
+        return mask_exists
 
 
         

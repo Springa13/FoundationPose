@@ -2,9 +2,9 @@ from estimater import *
 from reader import *
 import time
 import argparse
-from simulate_video import *
 from pathlib import Path
 from mask_gen import create_mask
+from rename_files import rename_files
 
 
 if __name__=='__main__':
@@ -15,7 +15,6 @@ if __name__=='__main__':
     parser.add_argument('--track_refine_iter', type=int, default=2)
     parser.add_argument('--output_dir', type=str, default='output')
     parser.add_argument('--frame_output', type=bool, default=False)
-    parser.add_argument('--simulate', type=bool, default=False)
     args = parser.parse_args()
 
     set_logging_format()
@@ -44,6 +43,8 @@ if __name__=='__main__':
 
     reader = DTwinReader(video_dir=scene_dir, shorter_side=None, zfar=np.inf)   
 
+    rename_files(args.test_scene_dir)
+    
     while not reader.get_video_detected():
         reader.get_first_frame()
     
@@ -94,6 +95,6 @@ if __name__=='__main__':
         f.write(f"{i}\n")
     f.close()
 
-    with open("robot_pose.pkl", "wb") as f:
+    with open("estimated_poses.pkl", "wb") as f:
         pickle.dump(pose_array, f)
     

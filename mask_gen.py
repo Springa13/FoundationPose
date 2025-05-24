@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 from segment_anything import SamPredictor, sam_model_registry
+import sys
 
 # Initialize SAM model
 def initialize_sam(model_type="vit_b", checkpoint_path="weights/SAM/sam_vit_b.pth"):
@@ -97,4 +98,4 @@ def create_mask(data_folder):
     cv2.destroyAllWindows()
         
       
-create_mask('mustard')
+create_mask(sys.argv[1])
