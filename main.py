@@ -2,7 +2,7 @@ import subprocess
 from pathlib import Path
 import os
 import glob
-from simulate_pose import *
+import time
 
 def run_digital_twin(data_folder):
     print("Running digital twin program...")
@@ -29,14 +29,6 @@ def run_simulate_video(data_folder):
     sv_process = subprocess.Popen(["python", "simulate_video.py", data_folder, fps])
     return sv_process
 
-def run_simulate_pose(data_folder):
-    
-    rename_simulation_bins(data_folder)
-    dt_process = run_digital_twin(data_folder)
-    time.sleep(10)
-    simulate_bin_output(data_folder)
-    time.sleep(2)
-    dt_process.terminate()
     
 
 default_launch = input("Use default launch sequence (y/n): ")
@@ -89,8 +81,6 @@ else:
                 sv_process = run_simulate_video(data_folder, True)
             else:
                 sv_process.terminate()
-        elif selection == '5':
-            run_simulate_pose(data_folder)
             
             
             
