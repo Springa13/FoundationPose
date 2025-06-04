@@ -50,10 +50,14 @@ Then modify the bash script to use this image instead of `foundationpose:latest`
 - To set up using conda, run the install_dependencies.sh file. This file assumes conda has been installed on the system, but can be changed by uncommenting out lines 7-10.
 
 
-# Run model-based demo
+# Run program
 The paths have been set in argparse by default. If you need to change the scene, you can pass the args accordingly. By running on the validation data, you should be able to see the robot manipulating the mustard bottle. Pose estimation is conducted on the first frame, then it automatically switches to tracking mode for the rest of the video. The resulting visualizations will be saved to the `output/{data_folder}` specified in the argparse.
 ```
-python run_demo.py
+python run_pose.py
+```
+For running the experimental scene inputs or custom inputs, simply place the data folder (eg. 360_10) into the data folder and run the following:
+```
+python run_pose.py --test_scene_dir 360_10
 ```
 
 

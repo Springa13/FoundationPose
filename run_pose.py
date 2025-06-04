@@ -15,6 +15,7 @@ if __name__=='__main__':
     parser.add_argument('--track_refine_iter', type=int, default=2)
     parser.add_argument('--output_dir', type=str, default='output')
     parser.add_argument('--frame_output', type=bool, default=True)
+    parser.add_argument('--simulation', type=bool, default=True)
     
     args = parser.parse_args()
 
@@ -28,16 +29,11 @@ if __name__=='__main__':
     obj_files = list(mesh_folder.glob("*.obj"))
     mesh_path = f'{obj_files[0]}'
     
-    
-    simulation = True
-    import trimesh.transformations as tf
+    simulation = args.simulation
 
     mesh = trimesh.load(mesh_path, force='mesh')
-
-    
-    scale_factor = 1.3  # Scale up by 10%
+    scale_factor = 1.3  # Scale up by 30%
     mesh.apply_scale(scale_factor)
-    # mesh.apply_transform(R)
 
     output_dir = f'{code_dir}/{args.output_dir}/{args.test_scene_dir}'
     frame_output = args.frame_output
@@ -53,9 +49,6 @@ if __name__=='__main__':
     logging.info("Estimator initialization done")
 
     reader = DTwinReader(video_dir=scene_dir, shorter_side=None, zfar=np.inf)   
-
-    
-    #rename_files(args.test_scene_dir)
     
     while not reader.get_video_detected():
         reader.get_first_frame()
@@ -104,21 +97,24 @@ if __name__=='__main__':
         f.write(f"{i}\n")
     f.close()
 
-    f = open(f'{output_dir}/poses.txt', "w")
-    frames30 = [0, 250, 475, 590, 700, 825, 1139]
-    frames20 = [0, 166, 316, 394, 466, 550, 761]
-    frames10 = [0, 83, 158, 197, 233, 275, 380]
+    # ----------------------------
+    # FOR DATA VALIDATION PURPOSES
+    # ----------------------------
+    # f = open(f'{output_dir}/poses.txt', "w")
+    # frames30 = [0, 250, 475, 590, 700, 825, 1139]
+    # frames20 = [0, 166, 316, 394, 466, 550, 761]
+    # frames10 = [0, 83, 158, 197, 233, 275, 380]
      
-    with open(f'{output_dir}/poses.txt', 'w') as f:
-        for i, pose in enumerate(pose_array):
-            # Write the matrix
-            logging.info(f'i:{i}')
-            if i in frames30:
-                np.savetxt(f, pose, fmt='%g')  # %g uses general format for numbers
+    # with open(f'{output_dir}/poses.txt', 'w') as f:
+    #     for i, pose in enumerate(pose_array):
+    #         # Write the matrix
+    #         logging.info(f'i:{i}')
+    #         if i in frames30:
+    #             np.savetxt(f, pose, fmt='%g')  # %g uses general format for numbers
             
-                # Add a line break after each matrix except the last one
-                if i < len(pose_array) - 1:
-                    f.write('\n\n')
+    #             # Add a line break after each matrix except the last one
+    #             if i < len(pose_array) - 1:
+    #                 f.write('\n\n')
             
     
 
