@@ -62,6 +62,7 @@ python take_video.py [resolution] [fps]
 '''
 
 2. FoundationPose Model
+  
   The paths have been set in argparse by default. If you need to change the scene, you can pass the args accordingly. By running on the validation data, you should be able to see the robot manipulating the mustard bottle. Pose estimation is conducted on the first frame, then it automatically switches to tracking mode for the rest of the video. The resulting visualizations will be saved to the `output/{data_folder}` specified in the argparse.
   ```
   python run_pose.py
@@ -73,6 +74,7 @@ python take_video.py [resolution] [fps]
 
 
 3. Digital Twin
+
 Run through the file located at 'digitaltwin/FPDT.exe'.
 If it doesn't work on your system the file 'main.cpp' in the same directory must be recompiled.
 After compiling the executable can be run from within the digitaltwin directory as shown below:
