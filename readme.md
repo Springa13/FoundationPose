@@ -8,12 +8,16 @@ We present FoundationPose, a unified foundation model for 6D object pose estimat
 
 
 
-# Data prepare
+# Data
+
+The FoundationPose model network weights and SAM model weights can be downloaded from [here](https://drive.google.com/file/d/1kGb9EXD8YcYmm5H6zyQDWW6PYr7mVf0Q/view?usp=sharing). The weights folder can be downloaded, unzipped and placed in the FoundationPose directory as is. 
+
+Also provided is the experimental [input](https://drive.google.com/file/d/1PEVdxEOqJyZ78C9Q7-jkRx8N8mrTY_fg/view?usp=sharing) (5.23GB) and [output](https://drive.google.com/file/d/1j8990gk_XpuDEu6S81fN887od2oKD45Y/view?usp=sharing) (3.91GB) data as part of the MXEN4004 Mechatronics Research Project. The input and output data contain nine datasets (eg. 720_10) that must be put into the 'data' directory.
+
+Finally, the validation dataset as originally provided by the NVLabs/FoundationPose Github repository can be downloaded [here](https://drive.google.com/drive/folders/1pRyFmxYXmAnpku7nGRioZaKrVJtIsroP?usp=sharing).
 
 
-1) Download all network weights from [here](https://drive.google.com/drive/folders/1DFezOAD0oD1BblsXVxqDsl8fj0qzB82i?usp=sharing) and put them under the folder `weights/`. For the refiner, you will need `2023-10-28-18-33-37`. For scorer, you will need `2024-01-11-20-02-45`.
 
-1) [Download demo data](https://drive.google.com/drive/folders/1pRyFmxYXmAnpku7nGRioZaKrVJtIsroP?usp=sharing) and extract them under the folder `demo_data/`
 
 
 # Setup Option 1: Docker
@@ -43,11 +47,11 @@ Then modify the bash script to use this image instead of `foundationpose:latest`
 
 # Setup Option 2: Conda
 
-- To set up using conda, run the install_dependencies.sh file. This file assumes conda hasn't been installed on the system yet, but can be changed by commenting out lines 7-10.
+- To set up using conda, run the install_dependencies.sh file. This file assumes conda has been installed on the system, but can be changed by uncommenting out lines 7-10.
 
 
 # Run model-based demo
-The paths have been set in argparse by default. If you need to change the scene, you can pass the args accordingly. By running on the demo data, you should be able to see the robot manipulating the mustard bottle. Pose estimation is conducted on the first frame, then it automatically switches to tracking mode for the rest of the video. The resulting visualizations will be saved to the `debug_dir` specified in the argparse. (Note the first time running could be slower due to online compilation)
+The paths have been set in argparse by default. If you need to change the scene, you can pass the args accordingly. By running on the validation data, you should be able to see the robot manipulating the mustard bottle. Pose estimation is conducted on the first frame, then it automatically switches to tracking mode for the rest of the video. The resulting visualizations will be saved to the `output/{data_folder}` specified in the argparse.
 ```
 python run_demo.py
 ```

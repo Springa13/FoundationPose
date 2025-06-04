@@ -23,7 +23,6 @@ weights/*
 downloads/
 eggs/
 .eggs/
-digitaltwin/
 lib/
 lib64/
 parts/
@@ -162,5 +161,4 @@ dmypy.json
 # Datasets
 data/
 logs/
-!BundleTrack/XMem/inference/data
 run_used.yml
