@@ -63,15 +63,14 @@ python take_video.py [resolution] [fps]
 
 2. FoundationPose Model
   
-  The paths have been set in argparse by default. If you need to change the scene, you can pass the args accordingly. By running on the validation data, you should be able to see the robot manipulating the mustard bottle. Pose estimation is conducted on the first frame, then it automatically switches to tracking mode for the rest of the video. The resulting visualizations will be saved to the `output/{data_folder}` specified in the argparse.
-  ```
-  python run_pose.py
-  ```
-  For running the experimental scene inputs or custom inputs, simply place the data folder (eg. 360_10) into the data folder and run the following:
-  ```
-  python run_pose.py --test_scene_dir 360_10
-  ```
-
+The paths have been set in argparse by default. If you need to change the scene, you can pass the args accordingly. By running on the validation data, you should be able to see the robot manipulating the mustard bottle. Pose estimation is conducted on the first frame, then it automatically switches to tracking mode for the rest of the video. The resulting visualizations will be saved to the `output/{data_folder}` specified in the argparse.
+```
+python run_pose.py
+```
+For running the experimental scene inputs or custom inputs, simply place the data folder (eg. 360_10) into the data folder and run the following:
+```
+python run_pose.py --test_scene_dir 360_10
+```
 
 3. Digital Twin
 
@@ -83,6 +82,8 @@ After compiling the executable can be run from within the digitaltwin directory 
 ```
 For this to work, both the input folder and the output folder of the 'data_folder' name must be present
 '''
+
+If any bugs, let me know.
 
 # License
 The code and data are released under the NVIDIA Source Code License. Copyright © 2024, NVIDIA Corporation. All rights reserved.
