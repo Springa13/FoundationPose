@@ -6,7 +6,7 @@ We present FoundationPose, a unified foundation model for 6D object pose estimat
 
 # Changes
 
-
+Writing...
 
 # Data
 
@@ -16,8 +16,7 @@ Also provided is the experimental [input](https://drive.google.com/file/d/1PEVdx
 
 Finally, the validation dataset as originally provided by the NVLabs/FoundationPose Github repository can be downloaded [here](https://drive.google.com/drive/folders/1pRyFmxYXmAnpku7nGRioZaKrVJtIsroP?usp=sharing).
 
-
-
+In my research project i also run the FoundationPose model on this validation dataset and the results of that is shown [here]()
 
 
 # Setup Option 1: Docker
@@ -51,6 +50,18 @@ Then modify the bash script to use this image instead of `foundationpose:latest`
 
 
 # Run program
+
+The program can be run through the main.py file for running all the video acquistion system, foundationpose model, and digital twin through. It has a command line interface that is easy to follow along with (i think) to be able to select what to run and when to run them. The main.py program may be slightly buggy or not work with some other programs.
+
+Alternatively, each part of the program can be run individually as detailed below:
+1. Video Acquisiton System
+
+Run through the 'take_video.py' file.
+'''
+python take_video.py [resolution] [fps]
+'''
+
+2. FoundationPose Model
 The paths have been set in argparse by default. If you need to change the scene, you can pass the args accordingly. By running on the validation data, you should be able to see the robot manipulating the mustard bottle. Pose estimation is conducted on the first frame, then it automatically switches to tracking mode for the rest of the video. The resulting visualizations will be saved to the `output/{data_folder}` specified in the argparse.
 ```
 python run_pose.py
@@ -60,6 +71,16 @@ For running the experimental scene inputs or custom inputs, simply place the dat
 python run_pose.py --test_scene_dir 360_10
 ```
 
+
+1. Digital Twin
+Run through the file located at 'digitaltwin/FPDT.exe'.
+If it doesn't work on your system the file 'main.cpp' in the same directory must be recompiled.
+After compiling the executable can be run from within the digitaltwin directory as shown below:
+```
+./FPDT.exe [data_folder]
+```
+For this to work, both the input folder and the output folder of the 'data_folder' name must be present
+'''
 
 # License
 The code and data are released under the NVIDIA Source Code License. Copyright © 2024, NVIDIA Corporation. All rights reserved.
