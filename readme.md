@@ -6,7 +6,9 @@ We present FoundationPose, a unified foundation model for 6D object pose estimat
 
 # Changes
 
-Writing...
+Some changes were made to the entrypoint script of the FoundationPose model and the datareader implementation but except for that most of the original FoundationPose model remained intact.
+
+Additions to the implementation of significance were the video acquisition interface using the 'take_video.py' script and the digital twin through a C++ implementation found in the digitaltwin directory. 
 
 # Data
 
@@ -84,6 +86,12 @@ For this to work, both the input folder and the output folder of the 'data_folde
 '''
 
 If any bugs, let me know.
+
+# Miscellaneous Additions
+
+The FoundationPose-digital twin implementation is a product of a larger research project involving the use of an ABB IRB-120 robot to evaluate the accuracy and performance of the model for the use as a real-time digital twin. 
+
+Extra material including accuracy and performance results of the FoundationPose model can be found [here](https://drive.google.com/drive/folders/1KnxKrQp96ZT_YSs9e26_pGP8NdM4ZBhv?usp=sharing)
 
 # License
 The code and data are released under the NVIDIA Source Code License. Copyright © 2024, NVIDIA Corporation. All rights reserved.
