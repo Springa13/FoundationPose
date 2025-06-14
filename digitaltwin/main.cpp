@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
     }   
 
     Camera3D camera = { 0 };
-    camera.position = (Vector3){ 0.0f, 0.0f, 4.0f };  // Move back slightly
+    camera.position = (Vector3){ 0.0f, 0.0f, 0.1f };  // Move back slightly
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
     camera.fovy = 2 * atan(height / (2 * fy)) * RAD2DEG;  // Match fy
@@ -100,6 +100,7 @@ int main(int argc, char *argv[]) {
 
     using clock = std::chrono::steady_clock;
     auto last_run = clock::now();
+    bool repeat = false;
     
     SetTargetFPS(60);
 
@@ -118,17 +119,23 @@ int main(int argc, char *argv[]) {
 
         if (IsKeyDown(KEY_S)) scaleFactor = 0.01f;
         if (IsKeyDown(KEY_W)) scaleFactor = -0.01f;
+        if (IsKeyDown(KEY_R)) repeat = true;
+
+        if (repeat) {
+            frameNumber = 0;
+            repeat = false;
+        }
         //pos += scaleFactor;
         //camera.position = (Vector3){ 0.0f, 0.0f, pos };  // Move back slightly
-        scale += scaleFactor;
-        scaleMat = MatrixScale(scale, scale, scale);
+        // scale += scaleFactor;
+        // scaleMat = MatrixScale(scale, scale, scale);
         // Offset and apply transformations
         Matrix pose = loadBin(frameNumber, posePath);
 
         // model.transform = MatrixMultiply(MatrixTranslate(modelOffset.x, modelOffset.y, modelOffset.z), mat); 
         Matrix rot = MatrixRotateZ(DEG2RAD * 180);
 
-        model.transform = MatrixMultiply(MatrixMultiply(centerOffset, scaleMat), MatrixMultiply(rot, pose));
+        model.transform = MatrixMultiply(centerOffset, MatrixMultiply(rot, pose));
            
         scaleFactor = 0;
         BeginDrawing();
@@ -169,9 +176,11 @@ int main(int argc, char *argv[]) {
             if (simulation) {
                 auto now = clock::now();
                 std::chrono::duration<double> elapsed = now - last_run;
+                //elapsed.count() >= times[frameNumber+1] || 
                 
-                if (elapsed.count() >= times[frameNumber+1]) {
+                if (elapsed.count() >= 0.09) {
                     frameNumber++;
+                    printf("%f", elapsed.count());
                     last_run = now;
                 }
                 

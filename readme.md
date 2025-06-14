@@ -10,6 +10,8 @@ Some changes were made to the entrypoint script of the FoundationPose model and 
 
 Additions to the implementation of significance were the video acquisition interface using the 'take_video.py' script and the digital twin through a C++ implementation found in the digitaltwin directory. 
 
+![Output Video](/assets/output.mp4)
+
 # Data
 
 The FoundationPose model network weights and SAM model weights can be downloaded from [here](https://drive.google.com/file/d/1kGb9EXD8YcYmm5H6zyQDWW6PYr7mVf0Q/view?usp=sharing). The weights folder can be downloaded, unzipped and placed in the FoundationPose directory as is. 
